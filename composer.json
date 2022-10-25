@@ -1,0 +1,12 @@
+{
+    "name": "codad5/php-inex",
+    "description": "This is a php library that helps  to simulate node.js import / export",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Codad5\\PhpInex\\": "src/"
+        }
+    },
+    "require": {}
+}
