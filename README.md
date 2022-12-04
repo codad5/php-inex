@@ -2,6 +2,10 @@
 
 This is a package that simulates node.js import feature.
 
+## Installing it 
+```
+composer require codad5/php-inex
+```
 ## SAMPLE FOR DEFAULT EXPORT
 
 ##### Exporting data
