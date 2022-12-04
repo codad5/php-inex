@@ -3,10 +3,19 @@
     "description": "This is a php library that helps  to simulate node.js import / export",
     "type": "library",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Aniezeofor CHibueze (codad5)",
+            "email":"aniezeoformic@gmail.com"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Codad5\\PhpInex\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "ext-json":"*",
+        "php": ">=7.1"
+    }
 }
