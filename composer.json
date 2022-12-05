@@ -1,5 +1,6 @@
 {
     "name": "codad5/php-inex",
+    "version": "1.0.0",
     "description": "This is a php library that helps  to simulate node.js import / export",
     "type": "library",
     "license": "MIT",
@@ -17,5 +18,14 @@
     "require": {
         "ext-json":"*",
         "php": ">=7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^1.9"
+    },
+    "scripts":{
+        "test":"./vendor/bin/phpunit",
+        "stan": "./vendor/bin/phpstan analyse -c phpstan.neon",
+        "start": "php -S localhost:2000"
     }
 }

@@ -6,6 +6,9 @@
 namespace Codad5\PhpInex;
 
 use Closure;
+use Codad5\PhpInex\Exceptions\FileNotFound;
+use Codad5\PhpInex\Exceptions\NoExport;
+use Codad5\PhpInex\Handler\Error;
 use Exception;
 use RuntimeException;
 
@@ -13,6 +16,9 @@ use RuntimeException;
 // This is a library that helps in simulating node.js import in php
 class Import{
 
+    public function __construct(){
+
+    }
     /**
      * This function help to get the full path to the required file based on the request file 
      * @param string $file - This is the name of file to be imported
@@ -23,7 +29,7 @@ class Import{
     {   
         $file_path = $file;
         if(self::get_ext($file) != "php" && count(explode('.', $file)) > 0 && !file_exists(dirname($from)."/$file")) $file_path = "$file.php";
-        if(!file_exists(dirname($from)."/$file_path")) throw new Exception("No file found with name $file");
+        if(!file_exists(dirname($from)."/$file_path")) throw new FileNotFound($file);
         // return $_SERVER['DOCUMENT_ROOT']."/$file";
         return dirname($from)."/$file_path";
     }
@@ -41,7 +47,7 @@ class Import{
         try{
             $file_path = self::resolve_file($file_path, $from);
             if(!file_exists($file_path)){
-                throw new RuntimeException("File Not found :: $file_path");
+                throw new FileNotFound("$file_path", 404);
             }
             switch (strtolower(self::get_ext($file_path))) {
                 case 'php':
@@ -55,9 +61,8 @@ class Import{
             }
             return $to_be_exported;
         }
-        catch(Exception $e){
-            self::print_error($e);
-            die(500);
+        catch(Exception|FileNotFound $e){
+            Error::handle($e);
         }
     }
     public static function this($file_path)
@@ -73,15 +78,15 @@ class Import{
 
     private static function export_php($file_path)
     {
-        $to_be_exported = null;
+        
         $export = [];
-        ob_start();
-        require $file_path;
-        if(!isset($export)){
-            throw new Exception('Nothing to export in '.$file_path);
+        // ob_start();
+        $to_be_exported = require $file_path;
+        if(!isset($export) && !is_array($export)){
+            throw new NoExport($file_path);
         }
         $to_be_exported = $export;
-        ob_end_clean();
+        // ob_end_clean();
         return $to_be_exported;
     }
     /**
@@ -117,48 +122,5 @@ class Import{
      * @param Exception $e - Error Object
      */
 
-    private static function print_error(Exception $e)
-    {
-        echo "<h1>Error</h1>";
-        echo "<pre>";
-        // var_dump($e->getTrace()[0]);
-            echo "<ul>";
-                echo "<li>";
-                    echo "Message : ".$e->getMessage();
-                    echo "</li>";
-                    echo "<h3>Trace</h3>";
-                    echo "<ol>";
-                    foreach($e->getTrace() as $key => $e){
-                            echo "<li>";
-                            echo "<ul>";
-                            self::error_list($e);
-                            echo "</ul>";
-                        }
-                        echo "</ol>";
-                    echo "</li>";
-            
-            echo "Built by <a href='https://github.com/codad5'>Codad5</a>";
-    }
-
-    private static function error_list(array $e)
-    {
-        foreach($e as $key => $value){
-                if(is_array($value)){
-                    echo "<li>";
-                    echo "$key";
-                    echo "<ol>";
-                    foreach($value as $point){
-                        echo "<li>";
-                        echo "$point";
-                        echo "</li>";
-                    }
-                    echo "</ol>";
-                    echo "</li>";
-                    continue;
-                }
-                echo "<li>";
-                echo "$key : $value";
-                echo "</li>";
-            }
-    }
+    
 }
